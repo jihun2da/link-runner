@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기린🦒 링크 순차 오픈</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      background: #f9f9f9;
+      color: #333;
+      max-width: 480px;
+      margin: auto;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 1.1rem;
+    }
+
+    input[type="number"] {
+      font-size: 1rem;
+      width: 30%;
+      padding: 0.5rem;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 0.6rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #43a047;
+    }
+
+    #status {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-align: center;
+      color: #2e7d32;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h2>🔗 기린🦒 링크 자동 열기</h2>
+
+  <label>
+    링크 유지 시간 (초):
+    <input type="number" id="openDuration" value="1" min="1">
+  </label>
+
+  <label>
+    다음 링크 대기 시간 (초):
+    <input type="number" id="delayBetween" value="1" min="0">
+  </label>
+
+  <button onclick="startOpenLinks()">▶️ 링크 실행 시작</button>
+
+  <div id="status">🕒 대기 중...</div>
+
+  <script>
+    const links = [
+    "https://kin.naver.com/qna/detail.nhn?d1id=5&dirId=511&docId=422210109",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=5&dirId=511&docId=423611753",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=8&dirId=8040104&docId=430461412",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=5&dirId=511&docId=451031889",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=5&dirId=511&docId=453120206",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=5&dirId=511&docId=455470076",
+    "https://kin.naver.com/qna/detail.naver?d1id=4&dirId=40703&docId=470867085",
+    "https://kin.naver.com/qna/detail.naver?d1id=5&dirId=511&docId=475204310",
+    "https://kin.naver.com/qna/detail.naver?d1id=5&dirId=511&docId=476442677",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=8&dirId=8040104&docId=477633554",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=3&dirId=31106&docId=477633507",
+    "https://kin.naver.com/qna/detail.nhn?d1id=5&dirId=511&docId=477635425&answerNo=2",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=5&dirId=511&docId=478068989",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=4&dirId=40703&docId=478036845",
+    "https://kin.naver.com/qna/detail.nhn?d1id=5&dirId=511&docId=478487854&answerNo=1",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=4&dirId=40703&docId=478483376",
+    "https://m.kin.naver.com/mobile/qna/detail.naver?d1Id=4&dirId=40701&docId=478785083&answerNo=2",
+    "https://m.kin.naver.com/qna/dirs/40703/docs/479363704?answerNo=1",
+    "https://m.kin.naver.com/qna/dirs/511/docs/479372073",
+    "https://m.kin.naver.com/qna/dirs/511/docs/480125580",
+    "https://m.kin.naver.com/qna/dirs/511/docs/480155667",
+    "https://m.kin.naver.com/qna/dirs/113/docs/482161101?answerNo=4",
+    "https://m.kin.naver.com/qna/dirs/511/docs/482164706",
+    "https://m.kin.naver.com/qna/dirs/40701/docs/482639556",
+    "https://m.kin.naver.com/qna/dirs/40703/docs/482639983?answerNo=1",
+    "https://m.kin.naver.com/qna/dirs/511/docs/482812943?answerNo=2",
+    "https://m.kin.naver.com/qna/dirs/511/docs/482930153",
+    "https://m.kin.naver.com/qna/dirs/1060110/docs/483093011",
+    "https://m.kin.naver.com/qna/dirs/1061203/docs/483092380",
+    "https://m.kin.naver.com/qna/dirs/40701/docs/483362279?answerNo=1",
+    "https://m.kin.naver.com/qna/dirs/511/docs/483373071",
+    "https://m.kin.naver.com/qna/dirs/100201/docs/483621723",
+    "https://m.kin.naver.com/qna/dirs/511/docs/483623204",
+    "https://m.kin.naver.com/qna/dirs/31103/docs/483882044?answerNo=1",
+    "https://m.kin.naver.com/qna/dirs/511/docs/483863233",
+    "https://m.kin.naver.com/qna/dirs/31103/docs/484746773?answerNo=13",
+    "https://m.kin.naver.com/qna/dirs/8010501/docs/484747018",
+      // 필요 링크 추가...
+    ];
+
+    let currentIndex = 0;
+
+    function startOpenLinks() {
+      currentIndex = 0;
+      document.getElementById('status').textContent = '🚀 실행 중...';
+      openNextLink();
+    }
+
+    function openNextLink() {
+      const openDuration = parseInt(document.getElementById('openDuration').value) * 1000;
+      const delayBetween = parseInt(document.getElementById('delayBetween').value) * 1000;
+
+      if (currentIndex >= links.length) {
+        document.getElementById('status').textContent = "✅ 모든 링크 열기 완료!";
+        return;
+      }
+
+      const link = links[currentIndex];
+      const newWindow = window.open(link, '_blank');
+
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        document.getElementById('status').textContent = "❌ 팝업 차단됨. 브라우저 설정에서 팝업 허용해주세요.";
+        return;
+      }
+
+      document.getElementById('status').textContent = `🔗 ${currentIndex + 1} / ${links.length} 링크 열기 중...`;
+
+      setTimeout(() => {
+        newWindow.close();
+        currentIndex++;
+        setTimeout(openNextLink, delayBetween);
+      }, openDuration);
+    }
+  </script>
+
+</body>
+</html>
